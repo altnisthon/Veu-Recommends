@@ -62,7 +62,7 @@ const PRODUCTS_DEFAULT = {
     {id:"suml12",c:"Brow",b:"Kate",n:"Designing Eyebrow 3D",s:"EX-4 Ash Brown",p:"$12–$18",l:"",w:"Watsons / Shopee",no:"Ash brown for cool tones; Summer Light's brows should be soft and cool-toned",img:""},
     {id:"suml13",c:"Lip",b:"Dior Beauty",n:"Addict Lip Glow Oil",s:"063 Pink Lilac",p:"$45–$55",l:"",w:"Sephora SG",no:"Sheer cool lilac; Summer Light's lip should be airy, not vivid — this is perfect",img:""},
     {id:"suml14",c:"Lip",b:"Romand",n:"Glasting Melting Balm",s:"01 Bare Pink",p:"$15–$22",l:"",w:"Shopee",no:"Sheer cool pink balm; Summer Light's go-to daily lip — nothing too saturated",img:""},
-    {id:"suml15",c:"Lip",b:"Charlotte Tilbury",n:"Lip Lustre",s:"Pillow Talk",p:"$48–$60",l:"",w:"Sephora SG",no:"Soft cool mauve with lustre; Summer Light's elevated everyday lip",img:""},
+    {id:"suml15",c:"Lip",b:"Charlotte Tilbury",n:"Lip Lustre",s:"Pillow Talk",p:"$48–$60",l:"",w:"Sephora SG",no:"Soft cool mauve with lustre; Summer Light's elevated everyday lip",img:"https://img01.ztat.net/article/spp-media-p1/7faa9154c2224358a93555011b2494f0/6619d0296e51467bbb1513afd5d90d89.jpg?imwidth=762"},
     {id:"suml16",c:"Lip",b:"Etude",n:"Fixing Tint",s:"PK001 Pale Cool Pink",p:"$12–$18",l:"",w:"Shopee / Watsons",no:"Cool pale pink; accessible; Summer Light's budget everyday tint",img:""},
     {id:"suml17",c:"Highlight",b:"Becca",n:"Shimmering Skin Perfector",s:"Moonstone",p:"$42–$55",l:"",w:"Sephora SG",no:"Pearl-cool highlight; Summer Light's icy luminous glow — never warm gold",img:""},
   ],
