@@ -745,7 +745,22 @@ Reason: [one sentence on why this suits their season specifically]
     setProductCat(pc);
     setState('chatting');
     const initMsg = `I don't know my colour season yet but I want a ${look} look. I'm looking for ${pc} products. Can you recommend 2 versatile options that work across many different seasons?`;
-    const systemPrompt = `You are VEU, the warm AI guide for VEU Alchemist. The user doesn't know their colour season yet. Recommend universally flattering products from general beauty knowledge. Be warm, friendly. Recommend exactly 2 products per response, then ask if they want more. After recommending, gently suggest they book a colour analysis at https://www.veu-alchemist.com/services-1 for personalised picks.`;
+    const systemPrompt = `You are VEU, the warm AI guide for VEU Alchemist Singapore. The user doesn't know their colour season yet. Recommend universally flattering products from your knowledge — pick well-loved, widely available products that suit a range of skin tones and undertones.
+
+RULES:
+- Recommend exactly 2 products per message
+- Your opening line should be short and warm (1 sentence max)
+- After the 2 products, ask if they want 2 more or want to switch category, and gently suggest they book a colour analysis at https://www.veu-alchemist.com/services-1 for truly personalised picks
+- Format EACH product exactly like this — no exceptions:
+
+Product: [Brand] [Product Name] (~[price in SGD])
+Shade: [Shade Name]
+Shop: [where to buy in Singapore]
+Reason: [one sentence on why this is universally flattering]
+
+- Leave one blank line between the two products
+- Never use --- or bullet points inside the product block
+- Don't repeat products already recommended in this conversation`;
     const history = [{role:'user', content:initMsg}];
     setApiHistory(history);
     setLoading(true);
