@@ -248,15 +248,23 @@ const CAT_EMOJI = { Eye:'👁', Mascara:'👁', Brow:'✏️', Eyeliner:'👁', 
 
 function findProduct(productLine, seasonProducts) {
   const clean = productLine.replace(/\(~.*?\)/g, '').toLowerCase().trim();
+  // Pass 1: brand AND at least 2 meaningful product name words must match
   for (const p of (seasonProducts || [])) {
     const b = p.b.toLowerCase();
-    const n = p.n.toLowerCase();
-    const nWords = n.split(' ').filter(w => w.length > 2);
+    const nWords = p.n.toLowerCase().split(' ').filter(w => w.length > 2);
     const brandMatch = clean.includes(b);
-    const nameMatch = nWords.filter(w => clean.includes(w)).length >= 2;
-    if (brandMatch && nameMatch) return p;
+    const nameMatchCount = nWords.filter(w => clean.includes(w)).length;
+    if (brandMatch && nameMatchCount >= 2) return p;
   }
-  // fallback: brand only
+  // Pass 2: brand AND at least 1 meaningful product name word
+  for (const p of (seasonProducts || [])) {
+    const b = p.b.toLowerCase();
+    const nWords = p.n.toLowerCase().split(' ').filter(w => w.length > 2);
+    const brandMatch = clean.includes(b);
+    const nameMatchCount = nWords.filter(w => clean.includes(w)).length;
+    if (brandMatch && nameMatchCount >= 1) return p;
+  }
+  // Pass 3: brand only (last resort)
   for (const p of (seasonProducts || [])) {
     const b = p.b.toLowerCase();
     if (clean.includes(b)) return p;
@@ -270,11 +278,12 @@ function RichText({ text, seasonProducts = [] }) {
   let i = 0;
 
   while (i < lines.length) {
-    const trimmed = lines[i].trim();
+    // Strip ** bold markers before any detection logic
+    const trimmed = lines[i].trim().replace(/\*\*/g, '');
     if (trimmed.startsWith('Product:')) {
       const block = [];
       while (i < lines.length) {
-        const bl = lines[i].trim();
+        const bl = lines[i].trim().replace(/\*\*/g, '');
         if (bl === '' && block.length > 0) break;
         if (bl) block.push(bl);
         i++;
