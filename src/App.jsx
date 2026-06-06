@@ -491,7 +491,7 @@ export default function App() {
       try {
         const r = await fetch('/api/products');
         const data = await r.json();
-        // API returns { ok, products } — use KV data if available
+        // KV is source of truth — use exactly what's there
         if (data?.ok && Array.isArray(data.products) && data.products.length > 0) {
           setLiveProducts(data.products);
         }
