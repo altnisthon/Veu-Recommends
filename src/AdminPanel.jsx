@@ -397,7 +397,7 @@ export default function AdminPanel() {
   // ── Login screen ──
   if (!authed) {
     return (
-      <div style={{ minHeight:'100svh', background:C.cream, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', fontFamily:"'Montserrat', sans-serif", padding:24 }}>
+      <div style={{ minHeight:'100vh', background:C.cream, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', fontFamily:"'Montserrat', sans-serif", padding:24 }}>
         <div style={{ position:'fixed', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${C.green}, ${C.crimson}, ${C.crimsonLight})` }} />
         <div style={{ width:'100%', maxWidth:340, textAlign:'center' }}>
           <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:11, letterSpacing:'0.4em', color:C.textLight, textTransform:'uppercase', marginBottom:32 }}>VEU Alchemist · Admin</div>
@@ -426,12 +426,15 @@ export default function AdminPanel() {
 
   // ── Main admin UI ──
   return (
-    <div style={{ minHeight:'100vh', background:C.cream, fontFamily:"'Montserrat', sans-serif", paddingTop: 2 }}>
+    <div style={{ minHeight:'100%', background:C.cream, fontFamily:"'Montserrat', sans-serif" }}>
       <style>{`::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:${C.border};border-radius:4px} input::placeholder,textarea::placeholder{color:${C.textPale};}`}</style>
 
 
+      {/* Gradient stripe */}
+      <div style={{ height:2, background:`linear-gradient(90deg, ${C.green}, ${C.crimson}, ${C.crimsonLight})` }} />
+
       {/* Header */}
-      <div style={{ background:'#fff', borderBottom:`1px solid ${C.border}`, borderTop:`2px solid transparent`, backgroundImage:`linear-gradient(#fff,#fff), linear-gradient(90deg, ${C.green}, ${C.crimson}, ${C.crimsonLight})`, backgroundOrigin:'border-box', backgroundClip:'padding-box, border-box', padding:'0 22px', position:'sticky', top:0, zIndex:50, height:56, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+      <div style={{ background:'#fff', borderBottom:`1px solid ${C.border}`, padding:'0 22px', position:'sticky', top:2, zIndex:50, height:54, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <div>
           <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:15, letterSpacing:'0.2em', color:C.crimson, fontWeight:300 }}>VEU ALCHEMIST</div>
           <div style={{ fontSize:9, color:C.textPale, letterSpacing:'0.14em', textTransform:'uppercase', marginTop:1 }}>Product Admin · {products.length} products</div>
