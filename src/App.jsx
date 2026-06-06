@@ -637,7 +637,7 @@ export default function App() {
   const profile = season ? SEASON_PROFILES[season] : null;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#FDF8F5', display: 'flex', flexDirection: 'column', fontFamily: "'Montserrat', sans-serif" }}>
+    <div style={{ height: '100vh', background: '#FDF8F5', display: 'flex', flexDirection: 'column', fontFamily: "'Montserrat', sans-serif", overflow: 'hidden' }}>
       <style>{`
         @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -650,10 +650,10 @@ export default function App() {
       `}</style>
 
       {/* Gradient top line */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #154327, #932D28, #d75c61, #f1bab3)', zIndex: 100 }} />
+      <div style={{ height: 2, background: 'linear-gradient(90deg, #154327, #932D28, #d75c61, #f1bab3)', flexShrink: 0 }} />
 
       {/* Header */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #EDE8E0', padding: '0 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 2, zIndex: 50, height: 54 }}>
+      <div style={{ background: '#fff', borderBottom: '1px solid #EDE8E0', padding: '0 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50, height: 54, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <div style={{ width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <img src={VEU_LOGO} alt="VEU" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -674,7 +674,7 @@ export default function App() {
       </div>
 
       {/* Messages area */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 20px 20px', maxWidth: 660, width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 20px 20px', maxWidth: 660, width: '100%', margin: '0 auto', boxSizing: 'border-box', minHeight: 0 }}>
 
         {messages.map((m, i) => (
           <div key={i} className="msg-animate">
@@ -744,7 +744,7 @@ export default function App() {
 
       {/* Input bar */}
       {state !== 'ended' && state !== 'greeting' && (
-        <div style={{ background: '#fff', borderTop: '1px solid #EDE8E0', padding: '12px 20px 14px', position: 'sticky', bottom: 0 }}>
+        <div style={{ background: '#fff', borderTop: '1px solid #EDE8E0', padding: '12px 20px 14px', flexShrink: 0 }}>
           <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', gap: 10, alignItems: 'flex-end' }}>
             <textarea
               ref={inputRef}
