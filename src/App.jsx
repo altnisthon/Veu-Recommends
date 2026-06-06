@@ -415,23 +415,41 @@ function buildSystemPrompt(season, userName) {
   const greeting = name ? `The user's name is ${name}. Use their name naturally — occasionally, not every message.` : '';
 
   if (!season) {
+    const warmProducts = products.filter(p => ['Spring Light','Spring Bright','Autumn Mute','Autumn Deep'].includes(p.season));
+    const coolProducts = products.filter(p => ['Summer Light','Summer Mute','Winter Bright','Winter Dark'].includes(p.season));
+    const warmList = warmProducts.map(p => `[${p.c}] ${p.b} - ${p.n} | Shade: ${p.s} | Price: ${p.p} | Buy: ${p.w}${p.l ? ' | Link: ' + p.l : ''} | Why: ${p.no}`).join('\n');
+    const coolList = coolProducts.map(p => `[${p.c}] ${p.b} - ${p.n} | Shade: ${p.s} | Price: ${p.p} | Buy: ${p.w}${p.l ? ' | Link: ' + p.l : ''} | Why: ${p.no}`).join('\n');
     return `You are VEU, a warm and knowledgeable beauty consultant for VEU Alchemist — a Singapore-based colour analysis brand. ${greeting}
 
-Your personality: You're like a brilliant friend who genuinely knows makeup inside out. Warm, direct, a little editorial. You give real recommendations, not vague advice. You remember context within the conversation.
+Your personality: Warm, caring, direct. You never over-diagnose — you know the limits of a chat.
 
-The user hasn't done a colour analysis yet. You can:
-1. Help them discover their season through questions about their skin undertone, eye colour, hair colour, and how they look in warm vs cool colours.
-2. Recommend products generally while noting which seasons they suit best.
+The user hasn't done a colour analysis yet and wants a nudge.
 
-When recommending products, ALWAYS format each one exactly like this:
+YOUR ONLY JOB FOR DISCOVERY:
+Ask ONE question only — look at the veins on the inside of their wrist:
+- Blue/purple veins → cool undertone → likely Summer or Winter
+- Green/olive veins → warm undertone → likely Spring or Autumn
+- Mix of both → neutral undertone, could be either
+
+Once they answer, warmly tell them whether they lean warm or cool, name the two possible seasons, then recommend 3 products from the matching group. Always close with a warm nudge to book at veu-alchemist.com/services-1 for their exact season — make it feel natural, not salesy.
+
+RULES — follow strictly:
+- Ask ONLY the vein question. No eye colour, hair colour, or tan questions.
+- NEVER assign a specific season (e.g. do not say "you are Spring Light"). Only name the family: warm (Spring/Autumn) or cool (Summer/Winter).
+- Do NOT recommend products until they have answered the vein question.
+- Format every product exactly like this:
+
 Product: [Brand Name] ([price range])
 Shade: [Shade Name]
 Shop: [Where to buy] · [Shop →](link)
-Reason: [One warm, expert sentence on why this shade works]
+Reason: [One warm sentence on why this suits their undertone family]
 
-Keep responses conversational and warm. Three products at a time max unless asked for more.`;
+WARM UNDERTONE PRODUCTS (Spring / Autumn):
+${warmList}
+
+COOL UNDERTONE PRODUCTS (Summer / Winter):
+${coolList}`;
   }
-
   const profile = SEASON_PROFILES[season];
   const seasonProducts = products.filter(p => p.season === season);
   const productList = seasonProducts.map(p => `[${p.c}] ${p.b} - ${p.n} | Shade: ${p.s} | Price: ${p.p} | Buy: ${p.w}${p.l ? ' | Link: ' + p.l : ''} | Why: ${p.no}`).join('\n');
@@ -675,7 +693,7 @@ export default function App() {
         {/* Not sure options */}
         {state === 'not_sure' && !loading && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 4 }}>
-            <Chip label="help me discover my season" onClick={() => sendMessage("can you help me figure out my season?")} />
+            <Chip label="help me figure out my undertone" onClick={() => sendMessage("can you help me figure out my undertone?")} />
             <Chip label="browse recommendations anyway" onClick={() => { setState('chatting'); sendMessage("show me some general makeup recommendations"); }} />
           </div>
         )}
