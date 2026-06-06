@@ -378,7 +378,6 @@ export default function App() {
   };
 
   const selectCategory = (cat) => {
-    setMessages(m => [...m, { role: 'user', text: cat }]);
     setState('chatting');
     sendMessage(cat);
   };
