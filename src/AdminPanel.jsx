@@ -104,7 +104,7 @@ function ProductModal({ product, onSave, onClose, isNew }) {
   const [saving, setSaving] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const canSave = form.b.trim() && form.n.trim() && form.s.trim() && form.season && form.c;
+  const canSave = form.b.trim() && form.n.trim() && form.season && form.c;
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -159,7 +159,7 @@ function ProductModal({ product, onSave, onClose, isNew }) {
 
           {/* Shade */}
           <div>
-            <Label required>Shade Name</Label>
+            <Label>Shade Name</Label>
             <Input value={form.s} onChange={e => set('s', e.target.value)} placeholder="e.g. 04 Coral Sunrise" />
           </div>
 
@@ -321,12 +321,12 @@ export default function AdminPanel() {
     try {
       const r = await fetch('/api/products');
       const data = await r.json();
-      // API returns { ok, products } — extract the products array
-      const list = data?.products;
-      if (Array.isArray(list) && list.length > 0) {
-        setProducts(list);
+      const kvList = data?.products;
+      if (Array.isArray(kvList) && kvList.length > 0) {
+        // KV is source of truth — use exactly what's there
+        setProducts(kvList);
       } else {
-        // KV empty or not connected — seed from built-in defaults
+        // KV empty — seed from built-in defaults (first load only)
         setProducts(PRODUCTS_DEFAULT);
       }
     } catch {
@@ -438,7 +438,7 @@ export default function AdminPanel() {
   // ── Main admin UI ──
   return (
     <div style={{ minHeight:'100vh', background:C.cream, fontFamily:"'Montserrat', sans-serif" }}>
-      <style>{`html,body,#root{height:auto;overflow:auto} ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:${C.border};border-radius:4px} input::placeholder,textarea::placeholder{color:${C.textPale};}`}</style>
+      <style>{`html,body,#root{height:auto;overflow:auto} ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:${C.border};border-radius:4px} .tabs-scroll::-webkit-scrollbar{display:none} input::placeholder,textarea::placeholder{color:${C.textPale};}`}</style>
 
 
       {/* Gradient stripe */}
@@ -492,7 +492,7 @@ export default function AdminPanel() {
         </div>
 
         {/* Season tabs */}
-        <div style={{ display:'flex', overflowX:'auto', gap:0, marginBottom:18, borderBottom:`1px solid ${C.border}`, scrollbarWidth:'none' }}>
+        <div className="tabs-scroll" style={{ display:'flex', overflowX:'auto', gap:0, marginBottom:18, borderBottom:`1px solid ${C.border}`, scrollbarWidth:'none', WebkitOverflowScrolling:'touch', msOverflowStyle:'none' }}>
           {['All', ...SEASONS].map(s => (
             <button key={s} onClick={() => setActiveSeason(s)}
               style={{ background:'none', border:'none', borderBottom: activeSeason===s ? `2px solid ${C.crimson}` : '2px solid transparent', padding:'9px 13px', fontSize:9.5, letterSpacing:'0.1em', textTransform:'uppercase', cursor:'pointer', whiteSpace:'nowrap', color: activeSeason===s ? C.crimson : C.textLight, fontWeight: activeSeason===s ? 700 : 400, fontFamily:'inherit', transition:'all 0.15s', marginBottom:-1 }}>
