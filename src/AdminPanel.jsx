@@ -426,8 +426,8 @@ export default function AdminPanel() {
 
   // ── Main admin UI ──
   return (
-    <div style={{ minHeight:'100%', background:C.cream, fontFamily:"'Montserrat', sans-serif" }}>
-      <style>{`::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:${C.border};border-radius:4px} input::placeholder,textarea::placeholder{color:${C.textPale};}`}</style>
+    <div style={{ minHeight:'100vh', background:C.cream, fontFamily:"'Montserrat', sans-serif" }}>
+      <style>{`html,body,#root{height:auto;overflow:auto} ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:${C.border};border-radius:4px} input::placeholder,textarea::placeholder{color:${C.textPale};}`}</style>
 
 
       {/* Gradient stripe */}
