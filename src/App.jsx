@@ -507,7 +507,7 @@ export default function App() {
         )}
 
         {/* Quick prompts during chat */}
-        {state === 'chatting' && messages.length > 2 && !loading && (
+        {state === 'chatting' && messages.filter(m => m.role === 'ai' && m.text.toLowerCase().includes('product:')).length > 0 && !loading && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 4 }}>
             {['show me 2 more', 'what about lips?', 'what about blush?', 'what about eyes?', 'what about base?'].map(q => (
               <Chip key={q} label={q} onClick={() => sendMessage(q)} />
