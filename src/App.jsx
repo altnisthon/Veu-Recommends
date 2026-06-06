@@ -289,6 +289,29 @@ function UserMessage({ text }) {
   );
 }
 
+function TipBubble({ text }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+      <div style={{
+        background: '#fff',
+        border: '1px solid #EDE8E0',
+        borderLeft: '3px solid #154327',
+        borderRadius: '0 20px 20px 20px',
+        padding: '9px 16px',
+        maxWidth: '88%',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 8,
+      }}>
+        <span style={{ fontSize: 13, flexShrink: 0, marginTop: 1 }}>💾</span>
+        <span style={{ fontSize: 10.5, color: '#154327', lineHeight: 1.6, letterSpacing: '0.02em', fontWeight: 500 }}>
+          {text}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function Chip({ label, onClick }) {
   return (
     <button
@@ -488,7 +511,7 @@ export default function App() {
     const greeting = displayName
       ? `hi ${displayName}! i'm VEU, your personal colour consultant. which is your seasonal colour type? at the end, you can save a recommendation card with all your picks and links.`
       : `hi there! i'm VEU, your personal colour consultant. which is your seasonal colour type? at the end, you can save a recommendation card with all your picks and links.`;
-    setMessages([{ role: 'ai', text: greeting }]);
+    setMessages([{ role: 'ai', text: greeting }, { role: 'tip', text: '↓ save your picks · at the end of our chat, you can download a card with all your recommendations and shop links.' }]);
     setState('greeting');
   };
 
@@ -622,6 +645,8 @@ export default function App() {
           <div key={i} className="msg-animate">
             {m.role === 'ai'
               ? <AiMessage text={m.text} season={season} />
+              : m.role === 'tip'
+              ? <TipBubble text={m.text} />
               : <UserMessage text={m.text} />
             }
           </div>
