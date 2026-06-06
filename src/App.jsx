@@ -28,6 +28,146 @@ const C = {
   textDark: '#1a1a1a', textMid: '#666', textLight: '#A0988F', textPale: '#C0B8B0',
 };
 
+
+// ─── Recommendation Card Generator ───────────────────────
+function parseRecommendations(messages) {
+  const recs = [];
+  messages.forEach(m => {
+    if (m.role !== 'ai') return;
+    const clean = m.text.replace(/\*\*(.*?)\*\*/g, '$1');
+    const lines = clean.split('\n');
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i].trim();
+      if (/^Product:/i.test(line)) {
+        recs.push({
+          product: line.replace(/^Product:\s*/i, ''),
+          shade:   (lines[i+1]||'').replace(/^Shade:\s*/i, '').trim(),
+          shop:    (lines[i+2]||'').replace(/^Shop:\s*/i, '').trim(),
+          reason:  (lines[i+3]||'').replace(/^Reason:\s*/i, '').trim(),
+        });
+        i += 4;
+      } else { i++; }
+    }
+  });
+  return recs;
+}
+
+function generateCard(recs, season, userName) {
+  const name = userName && userName !== 'lovely' ? userName : null;
+  const profile = season ? SEASON_PROFILES[season] : null;
+  const date = new Date().toLocaleDateString('en-SG', { day:'numeric', month:'long', year:'numeric' });
+
+  // Parse shop links from "Shop text · [Shop →](url)" format
+  const parseShop = (shopStr) => {
+    const linkMatch = shopStr.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
+    const textPart = shopStr.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '').replace(/·\s*$/, '').trim();
+    return { text: textPart, url: linkMatch ? linkMatch[2] : null };
+  };
+
+  const recCards = recs.map(r => {
+    const shop = parseShop(r.shop);
+    return `
+      <div class="product-card">
+        <div class="product-top">
+          <div class="product-name">${r.product}</div>
+          ${r.shade ? `<div class="product-shade">${r.shade}</div>` : ''}
+        </div>
+        ${r.shop ? `<div class="product-shop">
+          ${shop.url
+            ? `<a href="${shop.url}" target="_blank" rel="noopener noreferrer">${shop.text || 'Shop'} →</a>`
+            : `<span>${r.shop}</span>`
+          }
+        </div>` : ''}
+        ${r.reason ? `<div class="product-reason">${r.reason}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VEU Alchemist — My Colour Picks${season ? ' · ' + season : ''}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #FDF8F5; font-family: 'Montserrat', sans-serif; color: #1a1a1a; min-height: 100vh; }
+  .page { max-width: 680px; margin: 0 auto; padding: 48px 32px 64px; }
+
+  .stripe { height: 3px; background: linear-gradient(90deg, #154327, #932D28, #d75c61, #f1bab3); margin-bottom: 40px; }
+
+  .header { text-align: center; margin-bottom: 36px; }
+  .brand { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: #A0988F; margin-bottom: 14px; }
+  .title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; line-height: 1.2; color: #1a1a1a; margin-bottom: 8px; }
+  .title em { color: #932D28; font-style: italic; }
+  .meta { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #C0B8B0; margin-top: 10px; }
+  .divider { width: 32px; height: 1px; background: #932D28; margin: 14px auto; }
+
+  .season-tag { display: inline-block; background: #fff; border: 1px solid #EDE8E0; border-left: 3px solid #932D28; padding: 8px 16px; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #932D28; font-weight: 700; margin-bottom: 32px; }
+
+  .section-label { font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #C0B8B0; font-weight: 700; margin-bottom: 14px; }
+
+  .product-card { background: #fff; border: 1px solid #EDE8E0; border-left: 2px solid #932D28; border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 10px; }
+  .product-top { margin-bottom: 6px; }
+  .product-name { font-size: 12px; font-weight: 700; color: #1a1a1a; letter-spacing: 0.02em; line-height: 1.4; }
+  .product-shade { font-size: 11px; color: #932D28; margin-top: 2px; font-weight: 500; letter-spacing: 0.03em; }
+  .product-shop { font-size: 10px; color: #888; margin-bottom: 6px; }
+  .product-shop a { color: #932D28; text-decoration: none; border-bottom: 1px solid rgba(147,45,40,0.3); padding-bottom: 1px; }
+  .product-shop a:hover { opacity: 0.75; }
+  .product-reason { font-size: 10.5px; color: #A0988F; font-style: italic; line-height: 1.6; border-top: 1px solid #F0EBE5; padding-top: 7px; margin-top: 6px; letter-spacing: 0.01em; }
+
+  .footer { margin-top: 48px; text-align: center; border-top: 1px solid #EDE8E0; padding-top: 24px; }
+  .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 0.2em; color: #932D28; font-weight: 300; text-transform: uppercase; }
+  .footer-note { font-size: 9px; color: #C0B8B0; letter-spacing: 0.1em; margin-top: 6px; }
+  .footer-link { color: #932D28; text-decoration: none; }
+
+  @media print {
+    body { background: #fff; }
+    .page { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<div class="page">
+  <div class="header">
+    <div class="brand">VEU Alchemist · Colour Picks</div>
+    <h1 class="title">
+      ${name ? `${name}'s` : 'my'} colour picks.<br/>
+      <em>${season || 'curated for you.'}</em>
+    </h1>
+    <div class="divider"></div>
+    <div class="meta">Generated ${date} · veu-recommends.vercel.app</div>
+  </div>
+
+  ${season ? `<div style="text-align:center;margin-bottom:32px"><div class="season-tag">${profile?.emoji || ''} ${season} · ${profile?.profile || ''}</div></div>` : ''}
+
+  <div class="section-label">${recs.length} product${recs.length !== 1 ? 's' : ''} recommended</div>
+  ${recCards}
+
+  <div class="footer">
+    <div class="footer-brand">VEU Alchemist</div>
+    <div class="footer-note">colour analysis · makeup recommendations · <a class="footer-link" href="https://veu-alchemist.com" target="_blank">veu-alchemist.com</a></div>
+  </div>
+</div>
+</body>
+</html>`;
+
+  return html;
+}
+
+function downloadCard(recs, season, userName) {
+  const html = generateCard(recs, season, userName);
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `veu-picks${season ? '-' + season.toLowerCase().replace(/\s+/g,'-') : ''}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ─── Product helpers ─────────────────────────────────────
 // Runtime product store — starts with defaults, overwritten by KV on load
 let _products = PRODUCTS_DEFAULT;
@@ -346,8 +486,8 @@ export default function App() {
     setUserName(name);
     const displayName = name !== 'lovely' ? name : null;
     const greeting = displayName
-      ? `hi ${displayName}! i'm VEU, your personal colour consultant. which is your seasonal colour type?`
-      : `hi there! i'm VEU, your personal colour consultant. which is your seasonal colour type?`;
+      ? `hi ${displayName}! i'm VEU, your personal colour consultant. which is your seasonal colour type? at the end, you can save a recommendation card with all your picks and links.`
+      : `hi there! i'm VEU, your personal colour consultant. which is your seasonal colour type? at the end, you can save a recommendation card with all your picks and links.`;
     setMessages([{ role: 'ai', text: greeting }]);
     setState('greeting');
   };
@@ -416,6 +556,11 @@ export default function App() {
       : `you're going to look amazing. come back anytime. 🌹`;
     setMessages(m => [...m, { role: 'ai', text: bye }]);
     setState('ended');
+    // Auto-trigger card download if any recommendations were made
+    const recs = parseRecommendations(messages);
+    if (recs.length > 0) {
+      setTimeout(() => downloadCard(recs, season, userName), 600);
+    }
   };
 
   const restart = () => {
@@ -527,13 +672,32 @@ export default function App() {
         {/* Quick prompts — only after first recommendations */}
         {state === 'chatting' && messages.filter(m => m.role === 'ai' && m.text.toLowerCase().includes('product:')).length > 0 && !loading && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 4 }}>
-            <Chip label="show me 2 more" onClick={() => sendMessage('show me 2 more')} />
+            <Chip label="show me 3 more" onClick={() => sendMessage('show me 3 more')} />
+            <button
+              onClick={() => downloadCard(parseRecommendations(messages), season, userName)}
+              style={{ background: 'transparent', color: '#154327', border: '1px solid #154327', borderRadius: 2, padding: '7px 14px', fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 500, textTransform: 'uppercase', transition: 'all 0.15s' }}
+              onMouseOver={e => { e.currentTarget.style.background = '#154327'; e.currentTarget.style.color = '#fff'; }}
+              onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#154327'; }}>
+              ↓ save my picks
+            </button>
           </div>
         )}
 
         {/* End state */}
         {state === 'ended' && (
           <div style={{ textAlign: 'center', marginTop: 20 }}>
+            {parseRecommendations(messages).length > 0 && (
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 11, color: '#A0988F', letterSpacing: '0.04em', marginBottom: 10 }}>
+                  your picks are ready to save.
+                </div>
+                <button
+                  onClick={() => downloadCard(parseRecommendations(messages), season, userName)}
+                  style={{ background: '#154327', color: '#fff', border: 'none', borderRadius: 2, padding: '11px 24px', fontSize: 9.5, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700, marginBottom: 10, display: 'block', margin: '0 auto 10px' }}>
+                  ↓ download my picks
+                </button>
+              </div>
+            )}
             <button onClick={restart}
               style={{ background: 'transparent', color: '#932D28', border: '1px solid #932D28', borderRadius: 2, padding: '11px 28px', fontSize: 9.5, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700, transition: 'all 0.2s' }}
               onMouseOver={e => { e.currentTarget.style.background = '#932D28'; e.currentTarget.style.color = '#fff'; }}
