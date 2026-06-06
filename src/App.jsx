@@ -374,7 +374,13 @@ export default function App() {
 
   const selectLook = (look) => {
     setMessages(m => [...m, { role: 'user', text: look }, { role: 'ai', text: `love that! what products are you looking for?` }]);
+    setState('picking');
+  };
+
+  const selectCategory = (cat) => {
+    setMessages(m => [...m, { role: 'user', text: cat }]);
     setState('chatting');
+    sendMessage(cat);
   };
 
   const sendMessage = async (text) => {
@@ -421,6 +427,7 @@ export default function App() {
   };
 
   const LOOKS = ['Natural & Everyday', 'K-Beauty Glass Skin', 'Glam', 'Office Chic', 'Romantic', 'Bold & Editorial'];
+  const CATEGORIES = ['👁 Eyes', '🌸 Blush', '💋 Lips', '✨ Base & Skin', '💄 Full Look'];
 
   if (userName === null) return <WelcomeScreen onStart={startChat} />;
 
@@ -456,7 +463,7 @@ export default function App() {
             }
           </div>
         </div>
-        {state !== 'ended' && state !== 'greeting' && (
+        {state !== 'ended' && state !== 'greeting' && state !== 'look' && (
           <button onClick={endChat} style={{ background: 'none', border: 'none', fontSize: 9.5, color: '#B0A8A0', cursor: 'pointer', letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'inherit', fontWeight: 600, padding: '6px 0' }}>
             end ×
           </button>
@@ -511,12 +518,17 @@ export default function App() {
           </div>
         )}
 
-        {/* Quick prompts during chat */}
+        {/* Product category picker */}
+        {state === 'picking' && !loading && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 4 }}>
+            {CATEGORIES.map(c => <Chip key={c} label={c} onClick={() => selectCategory(c)} />)}
+          </div>
+        )}
+
+        {/* Quick prompts — only after first recommendations */}
         {state === 'chatting' && messages.filter(m => m.role === 'ai' && m.text.toLowerCase().includes('product:')).length > 0 && !loading && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 4 }}>
-            {['show me 2 more', 'what about lips?', 'what about blush?', 'what about eyes?', 'what about base?'].map(q => (
-              <Chip key={q} label={q} onClick={() => sendMessage(q)} />
-            ))}
+            <Chip label="show me 2 more" onClick={() => sendMessage('show me 2 more')} />
           </div>
         )}
 
@@ -535,7 +547,7 @@ export default function App() {
       </div>
 
       {/* Input bar */}
-      {state !== 'ended' && state !== 'greeting' && (
+      {state !== 'ended' && state !== 'greeting' && state !== 'look' && (
         <div style={{ background: '#fff', borderTop: '1px solid #EDE8E0', padding: '12px 20px 14px', flexShrink: 0 }}>
           <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', gap: 10, alignItems: 'flex-end', width: '100%', boxSizing: 'border-box' }}>
             <textarea
