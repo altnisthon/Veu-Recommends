@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { PRODUCTS_DEFAULT } from "./products";
 
 // ─── Constants ───────────────────────────────────────────
 const SEASONS = [
@@ -319,8 +320,14 @@ export default function AdminPanel() {
     try {
       const r = await fetch('/api/products');
       const data = await r.json();
-      setProducts(Array.isArray(data) ? data : []);
-    } catch { setProducts([]); }
+      if (Array.isArray(data) && data.length > 0) {
+        setProducts(data);
+      } else {
+        setProducts(PRODUCTS_DEFAULT);
+      }
+    } catch {
+      setProducts(PRODUCTS_DEFAULT);
+    }
     setLoading(false);
   };
 
