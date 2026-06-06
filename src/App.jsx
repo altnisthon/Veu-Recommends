@@ -29,9 +29,10 @@ const C = {
 };
 
 // ─── Product helpers ─────────────────────────────────────
-function getProducts() {
-  return PRODUCTS_DEFAULT;
-}
+// Runtime product store — starts with defaults, overwritten by KV on load
+let _products = PRODUCTS_DEFAULT;
+function getProducts() { return _products; }
+function setLiveProducts(list) { if (Array.isArray(list) && list.length > 0) _products = list; }
 
 function findProduct(text, season) {
   const products = getProducts();
@@ -327,6 +328,10 @@ export default function App() {
       try {
         const r = await fetch('/api/products');
         const data = await r.json();
+        // API returns { ok, products } — use KV data if available
+        if (data?.ok && Array.isArray(data.products) && data.products.length > 0) {
+          setLiveProducts(data.products);
+        }
       } catch {}
     })();
   }, []);
