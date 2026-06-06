@@ -236,7 +236,7 @@ function WelcomeScreen({ onStart }) {
       </div>
 
       <style>{`
-        @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
+        html,body{margin:0;padding:0;overflow:hidden;height:100%} @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
         input::placeholder { color: #C8C0B8; font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 0.08em; }
       `}</style>
     </div>
@@ -422,9 +422,9 @@ export default function App() {
   const profile = season ? SEASON_PROFILES[season] : null;
 
   return (
-    <div style={{ height: '100vh', background: '#FDF8F5', display: 'flex', flexDirection: 'column', fontFamily: "'Montserrat', sans-serif", overflow: 'hidden' }}>
+    <div style={{ height: '100svh', background: '#FDF8F5', display: 'flex', flexDirection: 'column', fontFamily: "'Montserrat', sans-serif", overflow: 'hidden', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       <style>{`
-        @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
+        html,body{margin:0;padding:0;overflow:hidden;height:100%} @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         ::-webkit-scrollbar { width: 3px } ::-webkit-scrollbar-track { background: transparent }
         ::-webkit-scrollbar-thumb { background: #EDE8E0; border-radius: 3px }
@@ -459,7 +459,8 @@ export default function App() {
       </div>
 
       {/* Messages area */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 20px 20px', maxWidth: 660, width: '100%', margin: '0 auto', boxSizing: 'border-box', minHeight: 0 }}>
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ maxWidth: 660, width: '100%', margin: '0 auto', padding: '28px 20px 80px', boxSizing: 'border-box' }}>
 
         {messages.map((m, i) => (
           <div key={i} className="msg-animate">
@@ -526,11 +527,12 @@ export default function App() {
           </div>
         )}
       </div>
+      </div>
 
       {/* Input bar */}
       {state !== 'ended' && state !== 'greeting' && (
         <div style={{ background: '#fff', borderTop: '1px solid #EDE8E0', padding: '12px 20px 14px', flexShrink: 0 }}>
-          <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', gap: 10, alignItems: 'flex-end' }}>
+          <div style={{ maxWidth: 660, margin: '0 auto', display: 'flex', gap: 10, alignItems: 'flex-end', width: '100%', boxSizing: 'border-box' }}>
             <textarea
               ref={inputRef}
               value={input}
