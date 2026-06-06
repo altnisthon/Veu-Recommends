@@ -236,7 +236,7 @@ function WelcomeScreen({ onStart }) {
       </div>
 
       <style>{`
-        html,body{margin:0;padding:0;overflow:hidden;height:100%} @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
+        @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
         input::placeholder { color: #C8C0B8; font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: 0.08em; }
       `}</style>
     </div>
@@ -422,9 +422,9 @@ export default function App() {
   const profile = season ? SEASON_PROFILES[season] : null;
 
   return (
-    <div style={{ height: '100svh', background: '#FDF8F5', display: 'flex', flexDirection: 'column', fontFamily: "'Montserrat', sans-serif", overflow: 'hidden', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+    <div style={{ background: '#FDF8F5', display: 'flex', flexDirection: 'column', fontFamily: "'Montserrat', sans-serif", overflow: 'hidden', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       <style>{`
-        html,body{margin:0;padding:0;overflow:hidden;height:100%} @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
+        @keyframes pulse { 0%,100%{opacity:0.25;transform:scale(0.75)} 50%{opacity:1;transform:scale(1)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         ::-webkit-scrollbar { width: 3px } ::-webkit-scrollbar-track { background: transparent }
         ::-webkit-scrollbar-thumb { background: #EDE8E0; border-radius: 3px }
