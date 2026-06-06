@@ -292,6 +292,7 @@ function ProductRow({ product, onEdit, onDelete }) {
 export default function AdminPanel() {
   const [authed, setAuthed]       = useState(false);
   const [pwInput, setPwInput]     = useState('');
+  const [adminPw, setAdminPw]     = useState('');
   const [pwError, setPwError]     = useState(false);
   const [products, setProducts]   = useState([]);
   const [loading, setLoading]     = useState(false);
@@ -320,9 +321,12 @@ export default function AdminPanel() {
     try {
       const r = await fetch('/api/products');
       const data = await r.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setProducts(data);
+      // API returns { ok, products } — extract the products array
+      const list = data?.products;
+      if (Array.isArray(list) && list.length > 0) {
+        setProducts(list);
       } else {
+        // KV empty or not connected — seed from built-in defaults
         setProducts(PRODUCTS_DEFAULT);
       }
     } catch {
@@ -340,7 +344,7 @@ export default function AdminPanel() {
         body: JSON.stringify({ password: pwInput })
       });
       const data = await r.json();
-      if (data.ok) { setAuthed(true); }
+      if (data.ok) { setAuthed(true); setAdminPw(pwInput); }
       else { setPwError(true); pwRef.current?.select(); }
     } catch { setPwError(true); }
   };
@@ -352,13 +356,20 @@ export default function AdminPanel() {
       const r = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(list)
+        // API expects { password, products } — password verified server-side
+        body: JSON.stringify({ password: adminPw, products: list })
       });
-      if (r.ok) { setSyncMsg('✓ Synced — all users will see changes'); }
-      else { setSyncMsg('Sync failed — changes saved locally only'); }
-    } catch { setSyncMsg('Sync failed — check connection'); }
+      const data = await r.json();
+      if (data.ok) {
+        setSyncMsg('✓ Saved — images will show in chat immediately');
+      } else {
+        setSyncMsg(`Sync failed: ${data.error || 'unknown error'}`);
+      }
+    } catch (e) {
+      setSyncMsg('Sync failed — check connection');
+    }
     setSyncing(false);
-    setTimeout(() => setSyncMsg(''), 4000);
+    setTimeout(() => setSyncMsg(''), 5000);
   };
 
   const handleSave = async (updated) => {
