@@ -708,7 +708,6 @@ export default function App() {
         {/* Not sure options */}
         {state === 'not_sure' && !loading && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 4 }}>
-            <Chip label="help me figure out my undertone" onClick={() => sendMessage("can you help me figure out my undertone?")} />
             <Chip label="browse recommendations anyway" onClick={() => { setState('chatting'); sendMessage("show me some general makeup recommendations"); }} />
           </div>
         )}
